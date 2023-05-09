@@ -1,0 +1,5 @@
+demorar para digitar
+
+salvar conversas em json
+txt da dando ruim ? preciso contar mensagens e nao linhas
+
