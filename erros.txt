@@ -1,0 +1,1 @@
+o bot salva em loop a mesma mensagem arrumar o update

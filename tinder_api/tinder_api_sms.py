@@ -234,7 +234,7 @@ def like_count():
 
 def get_messages():
     try:
-        url = config.host + '/message/2'
+        url = config.host + '/messages/2'
         r = requests.get(url, headers=headers)
         return r.json()
     except requests.exceptions.RequestException as e:
