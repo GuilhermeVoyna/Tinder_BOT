@@ -22,6 +22,7 @@ def BOT(prompt2=None):
     return response
 
 
+
 def get_subject():
     prompts = [
         "Escreva haiku sobre ",
@@ -40,13 +41,13 @@ def semi_history(history,num = 5):
     # Iterando sobre cada conversa
     for message_number, messages in history.items():
         for message in messages:
+            
             messages_list.append(f"{message['message']}")
 
     messages_list = messages_list[-num:]
     prompt = '\n'.join(messages_list)
 
     return prompt
-
 
 def generate_message(matchID,name,bio=None):
 
