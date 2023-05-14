@@ -1,6 +1,7 @@
 import sys
 sys.path.append('./tinder_api')
 from tinder_api_sms import *
+from tinder_api_sms import *
 import datetime
 from datetime import datetime
 import bot
@@ -62,6 +63,18 @@ for user in matches:
             path=f'{folder_path}/{file_name}'
     
             if os.path.exists(path):
+                num=9
+                messages_list=[]
+                for messages in update['matches']:#? messages = list
+                    for message in messages['messages']: #? message = dic
+                        matchID = message['match_id']
+                        personId = message['from']
+                        message_text = message['message']
+                        messages_list.append(message_text)
+                        messages_list = messages_list[-num:]
+                        print(messages_list)      
+                        #! devemos gerar a conversa aki e ignorar o historico de cima              
+                    
                 num=9
                 messages_list=[]
                 for messages in update['matches']:#? messages = list
