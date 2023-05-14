@@ -1,8 +1,7 @@
 import sys
 sys.path.append('./tinder_api')
-from tinder_api_sms import get_person
+from tinder_api_sms import *
 import json
-import os
 
 
 def get_name(_id):
@@ -21,36 +20,6 @@ def count_messages(matchID):
     counter=len(data.items())
     return counter
 
-
-
-
-def save(matchID,personId,message,selfId):
-    name = get_name(personId)
-    folder_path = 'conversations' 
-    file_name=f'{matchID}.json'
-    path=f'{folder_path}/{file_name}'
-    if personId == selfId:
-        name = 'Guilherme'
-    
-    if os.path.exists(path):
-        
-        data = get_file(matchID)
-        counter=len(data.items())+1
-        new_message=[{"message":message,"from": name,"_id": personId,"matchID":matchID}]
-        data[counter]=new_message
-        with open(path, "w") as f:
-            json.dump(data, f,ensure_ascii=False)
-        
-    else:
-        # O arquivo não existe, então vamos criá-lo com algum conteúdo inicial
-        data = {"1": [{"message":message,"from": name,"_id": personId,"matchID":matchID}]}
-        with open(path, "w") as f:
-            json.dump(data, f,ensure_ascii=False)
-
-
-
-
-
 def get_file(matchID):
     try:
 
@@ -62,3 +31,4 @@ def get_file(matchID):
            return json.load(f)
     except FileNotFoundError:
         print(f"Error: file '{file_name}' not found.")
+

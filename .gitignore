@@ -3,7 +3,7 @@
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
-
+conversations/*
 __pycache__/
 *.py[cod]
 *$py.class

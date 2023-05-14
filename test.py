@@ -1,31 +1,31 @@
 import sys
 sys.path.append('./tinder_api')
-from tinder_api_sms import *;
+from tinder_api_sms import *
 import datetime
 from datetime import datetime
 import bot
 import conversation
 import os
 import time as t
+import update
 print('INICIANDO....')
 #todo ------------------------------------
 with open('time.txt', 'r') as f:
     time=f.read()
 me=get_self()
 selfId = me["_id"];
-update=get_updates(time)
+time = '2023-05-12T03:15:46.645789Z'
+time_update=get_updates(time)
 
 #todo try/wile------------------------------
 
+
+
 print('topo')
 print(time)
-    #pega mensagens antes do update
-for messages in update['matches']:#? messages = list
-    for message in messages['messages']: #? message = dic
-        matchID=(message['match_id'])
-        personId=(message['from'])
-        message=(message['message'])
-        conversation.save(matchID,personId,message,selfId)
+    #* pega mensagens antes do update
+news=get_updates(time)
+update.get_update(news,selfId)
 
 recs=get_recommendations()
 
@@ -37,20 +37,15 @@ guerra = '5b3c66c9226c1e3e29dfa189'
 matchID="5b3c66c9226c1e3e29dfa18962401030088f0a0100eaf05c"
 
 
-#mess=bot.generate_intro(match_name,"Guerra *°7")
-#send_msg(matchID,mess)
-
-
 count = "80";
 match_dict = all_matches(count);
 
 matches=match_dict['data']['matches']
 
-
 #todo: Responde novas mensagems
 for user in matches:
+    print(user)
     userId = user['_id'];
-
     if user['messages']:
         lastMessage = user['messages'][-1];
 
@@ -67,7 +62,18 @@ for user in matches:
             path=f'{folder_path}/{file_name}'
     
             if os.path.exists(path):
-    
+                num=9
+                messages_list=[]
+                for messages in update['matches']:#? messages = list
+                    for message in messages['messages']: #? message = dic
+                        matchID = message['match_id']
+                        personId = message['from']
+                        message_text = message['message']
+                        messages_list.append(message_text)
+                        messages_list = messages_list[-num:]
+                        print(messages_list)      
+                        #! devemos gerar a conversa aki e ignorar o historico de cima              
+                    
                 response = bot.generate_message(matchID,person_name,bio) #!deve ser criada
                 conversation.save(matchID,selfId,response,selfId)
                 print(response)
@@ -76,7 +82,7 @@ for user in matches:
                 response = bot.generate_intro(person_name,bio) 
                 conversation.save(matchID,selfId,response,selfId)
             print(response)
-            send_msg(matchID,response)
+            #!send_msg(matchID,response)
 
     else: #? matches sem mensagems
         personId=user['participants'][0]
@@ -85,7 +91,7 @@ for user in matches:
         bio = conversation.get_bio(personId)
         response = bot.generate_intro(person_name,bio) 
         conversation.save(matchID,selfId,response,selfId)
-        send_msg(matchID,response)
+        #!send_msg(matchID,response)
         print(response)
         
 
