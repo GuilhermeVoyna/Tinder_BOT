@@ -15,21 +15,18 @@ with open('time.txt', 'r') as f:
     time=f.read()
 me=get_self()
 selfId = me["_id"];
-time = '2023-05-12T03:15:46.645789Z'
+time = '2022-05-13T03:15:46.645789Z'
 time_update=get_updates(time)
-
 #todo try/wile------------------------------
 
 
 
 print('topo')
-print(time)
-    #* pega mensagens antes do update
+    #* novas mensagens
 news=get_updates(time)
 update.get_update(news,selfId)
-
+print('updated')
 recs=get_recommendations()
-
 
 print(me['bio'])
 
@@ -45,67 +42,46 @@ matches=match_dict['data']['matches']
 
 #todo: Responde novas mensagems
 for user in matches:
-    print(user)
+
     userId = user['_id'];
     if user['messages']:
+
         lastMessage = user['messages'][-1];
-
-        if lastMessage['from'] != selfId: #? Respondendo mensagens
-            
-            personId=lastMessage['from']
-            message = lastMessage['message'];
+        
+        if lastMessage['from'] != selfId: #? Respondendo mensagens novas
+        
             matchID=user['messages'][-1]['match_id']
-            person_name=conversation.get_name(personId)
-            bio = conversation.get_bio(personId)
-
+            personId=user['messages'][0]['from']
             folder_path = 'conversations' 
             file_name=f'{matchID}.json'
             path=f'{folder_path}/{file_name}'
-    
-            if os.path.exists(path):
-                num=9
-                messages_list=[]
-                for messages in update['matches']:#? messages = list
-                    for message in messages['messages']: #? message = dic
-                        matchID = message['match_id']
-                        personId = message['from']
-                        message_text = message['message']
-                        messages_list.append(message_text)
-                        messages_list = messages_list[-num:]
-                        print(messages_list)      
-                        #! devemos gerar a conversa aki e ignorar o historico de cima              
-                    
-                num=9
-                messages_list=[]
-                for messages in update['matches']:#? messages = list
-                    for message in messages['messages']: #? message = dic
-                        matchID = message['match_id']
-                        personId = message['from']
-                        message_text = message['message']
-                        messages_list.append(message_text)
-                        messages_list = messages_list[-num:]
-                        print(messages_list)      
-                        #! devemos gerar a conversa aki e ignorar o historico de cima              
-                    
-                response = bot.generate_message(matchID,person_name,bio) #!deve ser criada
-                conversation.save(matchID,selfId,response,selfId)
-                print(response)
 
-            else:
-                response = bot.generate_intro(person_name,bio) 
-                conversation.save(matchID,selfId,response,selfId)
-            print(response)
-            #!send_msg(matchID,response)
+            with open(path) as f:
+                data = json.load(f)
+            messages_list=data
 
-    else: #? matches sem mensagems
-        personId=user['participants'][0]
-        matchID=user['_id']
-        person_name=conversation.get_name(personId)
-        bio = conversation.get_bio(personId)
-        response = bot.generate_intro(person_name,bio) 
-        conversation.save(matchID,selfId,response,selfId)
+            person_name=messages_list[1]
+            bio = conversation.get_bio(personId) #! toda vez tem que pegar bio
+
+            response = bot.generate_message(matchID,person_name,bio) #!deve ser criada
+            update.save(response,matchID)
+            #print(response)
+
+        else:
+            response = bot.generate_intro(person_name,bio) 
+            update.save(response,matchID)
+        #print(response)
         #!send_msg(matchID,response)
-        print(response)
+
+else: #? matches sem mensagems
+    personId=user['participants'][0]
+    matchID=user['_id']
+    person_name=conversation.get_name(personId)
+    bio = conversation.get_bio(personId)
+    response = bot.generate_intro(person_name,bio) 
+    update.save(response,matchID)
+    #!send_msg(matchID,response)
+    print(response)
         
 
 print(me['bio'])

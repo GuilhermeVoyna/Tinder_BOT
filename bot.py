@@ -36,23 +36,18 @@ def get_subject():
 
 def semi_history(history,num = 5):
 
-    # Lista para armazenar as mensagens
-    messages_list = []
-    # Iterando sobre cada conversa
-    for message_number, messages in history.items():
-        for message in messages:
-            
-            messages_list.append(f"{message['message']}")
-
-    messages_list = messages_list[-num:]
-    prompt = '\n'.join(messages_list)
-
+    messages_list = history[-num:]
+    prompt = messages_list
+    print()
+    print(prompt)
+    print()
     return prompt
 
 def generate_message(matchID,name,bio=None):
 
     history=conversation.get_file(matchID)
     semi=semi_history(history)
+    
 
 
     prompt = f'"Você é um AI disfarçado de humano\nVoce sabe as melhores cantadas e piadas\nSeu nome é Gui Responda a mensagem de {name} com base no Historico de mensagens:\n{semi}\nSe você não conseguir responder a pergunta apenas fale \n Gatiinho ;) / hahaha que engrazado'
