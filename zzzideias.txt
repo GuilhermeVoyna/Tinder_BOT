@@ -6,8 +6,8 @@ txt da dando ruim ? preciso contar mensagens e nao linhas
 
 quando e finalizado o  bot ele salva a data em um aruivo separado
 
-filtrar bio so intagram
+filtrar bio sem intagram porfavor !prioridade!
 
 frazes de romance
 
-IA de ruivas?
+IA de ruivas? SIM

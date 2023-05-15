@@ -5,8 +5,11 @@ import json
 
 
 def get_name(_id):
-    name=get_person(_id)['results']['name']
-    return name
+    try:
+        name=get_person(_id)['results']['name']
+        return name
+    except:
+        return 'BAN'
 
 def get_bio(_id):
     try:
@@ -30,5 +33,6 @@ def get_file(matchID):
         with open(path, "r") as f:
            return json.load(f)
     except FileNotFoundError:
+        return[]
         print(f"Error: file '{file_name}' not found.")
 

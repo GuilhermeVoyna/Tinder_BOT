@@ -3,19 +3,26 @@ sys.path.append('./tinder_api')
 from tinder_api_sms import get_updates
 import conversation
 import os
-def save(message_list,matchID=None):
+import json
 
+def save(message_list,matchID=None):
+    
     if matchID==None:
         matchID=message_list[0]
+    else:
+        message_list=[f'Guilherme fala: {message_list}']
+        print(message_list)
 
     folder_path = 'conversations' 
     file_name=f'{matchID}.json'
     path=f'{folder_path}/{file_name}'
+
     if os.path.exists(path):   
         data = conversation.get_file(matchID)
         new_update=message_list[1:]
         with open(path, "w") as f:
             json.dump(new_update, f,ensure_ascii=False)
+
     elif matchID == 48:
         # O arquivo não existe, então vamos criá-lo com algum conteúdo inicial
         data=message_list
@@ -24,7 +31,8 @@ def save(message_list,matchID=None):
     else:
         print('ERROR: matchID não encontrado')
 
-def get_update(update):
+
+def get_update(update,selfId):
     message_list=[]
     match=None
     for messages in update['matches']:#? messages = list
@@ -46,11 +54,11 @@ def get_update(update):
             if match != matchID: #* se o matchId mudar
                 match=matchID
                 message_list.append(matchID)
-                print(f'\nINICIO DO MATCH: {matchID}\n-------------------') #printa o matchId
+                #!print(f'\nINICIO DO MATCH: {matchID}\n-------------------') #printa o matchId
 
 
             if personId == selfId:#* se a mensagem for do bot
-                finalName='BOT'
+                finalName='Guilherme'
             else:
                 if search: #* se o nome for desconhecido procura o nome
                     personName=conversation.get_name(personId)

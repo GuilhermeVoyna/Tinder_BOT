@@ -11,7 +11,6 @@ def save(message_list,matchID=None):
         matchID=message_list[0]
     else: 
         print(message_list)
-        matchID = 'ERROR'
     
 
     folder_path = 'conversations' 
@@ -20,7 +19,7 @@ def save(message_list,matchID=None):
     if os.path.exists(path):   
         data = get_file(matchID)
         new_update=message_list[2:]
-        data.append(new_update)
+        data.extend(new_update)
         with open(path, "w") as f:
             json.dump(data, f,ensure_ascii=False)
     elif len(matchID)==48:
@@ -46,6 +45,7 @@ def get_update(update,selfId):
             search=False
         else:                #* se o nome for desconhecido
             search=True
+            name='ERROR'
 
         for message in messages['messages']: 
 
@@ -68,7 +68,7 @@ def get_update(update,selfId):
             finalName=personName#* colocamos o nome da pessoa
 
             if (message['from']) == selfId: #* se a mensagem for do bot
-               finalName='BOT'
+               finalName='Guilherme'
             message=message['message']
 
             #*  CONVERTER personId para nome

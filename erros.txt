@@ -1,1 +1,18 @@
 o bot salva em loop a mesma mensagem arrumar o update
+
+bot esta DELETANDO o meu Historico socorro
+
+
+---------BOT PROMPT--------
+Ele está usando um aplicativo de namoro e está conversando com uma garota chamada Bruno.
+
+['5b3c66c9226c1e3e29dfa189616d03705bf7af01008e9a8e', ['Bruno'], ['Bruno fala: Nossa, que lindo verso!'], ['Bruno fala: Muito prazer Guerra, me chamo Bruno'], ['Bruno fala: Tudo bem com vc?']] responde com muito humor e curiosidade, ele pode até fazer uma pergunta também:
+
+dropar 2 primeiros items
+transformar isso em um roteiro ->
+
+Bruno fala: Nossa, que lindo verso!
+Bruno fala: Muito prazer Guerra, me chamo Bruno
+Bruno fala: Tudo bem com vc?
+{inserir nome aki?} responde com muito humor e curiosidade, ele pode até fazer uma pergunta também:
+
