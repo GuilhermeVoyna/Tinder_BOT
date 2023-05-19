@@ -4,6 +4,7 @@ from tinder_api_sms import get_updates
 from conversation import get_file , get_name
 import os
 import json
+import conversation
 
 def save(message_list,matchID=None):
 
@@ -28,57 +29,57 @@ def save(message_list,matchID=None):
         with open(path, "w") as f:
             json.dump(data, f,ensure_ascii=False)
 
-    
-def get_personId(matchId,selfId):
-    return matchId.replace(selfId, "")
-
-def get_update(update,selfId):
-
-    match=None
+def get_history(update,matchID,selfId,salvar=False):
+    message_list=[  ]    
     for messages in update['matches']:#? messages = list
-        #//print(message_list)
-        message_list=['matchId']
-        if 'person' in messages: #* se o nome for conhecido
-            name=[messages['person']['name']]
-            message_list.insert(1,name)
-            name=name[0]
-            search=False
-        else:                #* se o nome for desconhecido
-            search=True
-            name='ERROR'
 
-        for message in messages['messages']: 
+        if messages['_id']==matchID:   #* se o matchId da pessoa
 
-            personName=name
-            matchID=(message['match_id'])
-            finalName='ERROR' 
+            
+            if 'person' in messages: #* se o nome for conhecido
+                name=messages['person']['name']
+                message_list.insert(1,name)
+                name=name[0]
+                search=False
+            else:                #* se o nome for desconhecido
+                search=True
+                name='ERROR'            
+            message_list.insert(0,matchID)
 
-            if match != matchID: #* se o matchId mudar
-                match=matchID
-                del message_list[0]
-                message_list.insert(0,matchID)
-    
-            if search: #* se o nome for desconhecido procura o nome
-                personId=get_personId(matchID,selfId)
-                personName=[get_name(personId)]               
-                search=False#* para de procurar por nome
-                message_list.insert(1,personName)
-                name=personName[0]
-                personName=name
-            finalName=personName#* colocamos o nome da pessoa
+            for message in messages['messages']:#* pega as mensagens 
+                personName= name
+                finalName='ERROR' 
 
-            if (message['from']) == selfId: #* se a mensagem for do bot
-               finalName='Guilherme'
-            message=message['message']
+                if search: #* se o nome for desconhecido procura o nome
+                    personId=conversation.get_personId(matchID,selfId)
+                    personName=get_name(personId)               
+                    search=False#* para de procurar por nome
+                    message_list.insert(1,personName)
+                    name=personName[0]
+                    personName=name
+                    finalName=personName#* colocamos o nome da pessoa
 
-            #*  CONVERTER personId para nome
-            message_list.append([f'{finalName} fala: {message}'])
-        save(message_list)#* salva as mensagens em um json
+                if (message['from']) == selfId: #* se a mensagem for do bot
+                    finalName='BOT'
+                else:
+                    finalName=message_list[1]
 
-#//test_selfId='5b3c66c9226c1e3e29dfa189'
-#//test_time='2023-05-14T03:15:46.645789Z'
-#//test_update=get_updates(#//test_time)
-#get_update(#//test_update,selfId=#//test_selfId)
+                message=message['message']
+                message_list.append(f'{finalName} fala: {message}')
+    if salvar:
+        save(message_list)
+        
+    return message_list   
+
+def test_print(input):
+    print(input)
+
+
+
+#matchId='5b3c66c9226c1e3e29dfa1895df711009290cc0100ea5c7f'
+#selfId='5b3c66c9226c1e3e29dfa189'
+#time='2023-05-14T03:15:46.645789Z'
+#print(get_history(time,selfId,matchId))
 
 
 

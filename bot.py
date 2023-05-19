@@ -1,9 +1,13 @@
+import sys
+sys.path.append('./tinder_api')
+from tinder_api_sms import *
+
 import os
 from dotenv import load_dotenv
-import bot
 import random
 import openai
-import conversation
+import update
+
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -12,7 +16,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 def BOT(prompt2):
     response = openai.Completion.create(
     model="text-davinci-003",
-    prompt="Guilherme é um homem solteiro 21 anos que mora em São Paulo, mais especificamente em Liberdade. Ele é um estudante de engenharia de software e recentemente comprou algumas plantas, mas não sabe muito bem como cuidar delas. Um dos seus maiores sonhos é resolver o cubo de Rubik que está em sua mesa. Ele adora séries e videogames FPS.\nGuilherme tem muito senso de humor. Ele é muito curioso e sempre faz muitas perguntas.\nEle é gentil e sempre quer saber mais sobre as outras pessoas."+prompt2, #! EDITAR URGENTE
+    prompt="Guilherme é um homem solteiro 21 anos que mora em São Paulo, mais especificamente em Liberdade. Ele é um estudante de engenharia de software e recentemente comprou algumas plantas, mas não sabe muito bem como cuidar delas. Um dos seus maiores sonhos é resolver o cubo de Rubik que está em sua mesa. Ele adora séries e videogames FPS.\nGuilherme tem muito senso de humor. Ele é muito curioso e sempre faz muitas perguntas.\nEle é gentil e sempre quer saber mais sobre as outras pessoas.\n"+prompt2, 
     temperature=0.7,
     max_tokens=500,
     top_p=1,
@@ -22,21 +26,22 @@ def BOT(prompt2):
     return response
 
 
-def semi_hist(history,num = 5):
+def semi_hist(history,num = 10):
 
+    history=history[2:]
     messages_list = history[-num:]
     print('---------BOT INFO--------')
+    message = '\n'.join(map(str, messages_list))
     print(messages_list)
-    return messages_list
+    return message
 
-def generate_message(matchID,personName,bio=None,num=5):
+def generate_message(matchID,personName,selfId,updates,bio=None,num=10):
 
-    history=conversation.get_file(matchID)
-
-    semi_history=semi_hist(history,num)
+    history=update.get_history(updates,matchID,selfId)
     
+    semi_history=semi_hist(history,num)
 
-    prompt_extra=f'Ele está usando um aplicativo de namoro e está conversando com uma garota chamada {personName}.\n\n{semi_history} responde com muito humor e curiosidade, ele pode até fazer uma pergunta também:'
+    prompt_extra=f'Ele está usando um aplicativo de namoro e está conversando com uma garota chamada {personName}.\n\n{semi_history} responde de forma informal com muito humor e curiosidade, ele pode até fazer uma pergunta também de forma informal:'
     print('---------BOT PROMPT--------')
     print(prompt_extra)
 
@@ -51,10 +56,7 @@ def get_subject():
         "Mande um flerte para ",
         "Escreva uma mensagem no Tinder para ",
         "Inicie uma conversa com ",
-        "Pergunte de jogos favoritos para ",
-        "Descubra a musica favorita de ",
-        "Pergunte sobre esportes para "
-
+        "Pergunte de musica para "
     ]
     choice = random.choice(prompts)
     return choice

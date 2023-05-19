@@ -1,5 +1,11 @@
 {
     "python.analysis.extraPaths": [
         "./Tinder_API"
+    ],
+    "cSpell.words": [
+        "davinci",
+        "dotenv",
+        "INICIANDO",
+        "openai"
     ]
 }

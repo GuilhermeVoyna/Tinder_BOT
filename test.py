@@ -1,22 +1,17 @@
 import sys
 sys.path.append('./tinder_api')
 from tinder_api_sms import *
-from tinder_api_sms import *
+
 import datetime
 from datetime import datetime
 import bot
 import re
 import os
 import time as t
-import update
+import conversation
+import caracteres
 
-def remove_caracteres_especiais_inicio(string):
-    padrao = re.compile(r'^[^\w\s!]*')
-    return padrao.sub('', string)
 
-def remove_caracteres_especiais_final(string):
-    padrao = re.compile(r'[^\w\s?!]+$')
-    return padrao.sub('', string)
 
 print('INICIANDO....')
 #todo ------------------------------------
@@ -24,26 +19,25 @@ with open('time.txt', 'r') as f:
     time=f.read()
 me=get_self()
 selfId = me["_id"];
-time = '2023-05-15T03:20:18.799747Z'
 #todo try/wile------------------------------
 now = datetime.utcnow()  # get current UTC time
 formatted_time = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')  # format the time string
 print(formatted_time)
+time = formatted_time
 
+time = '2023-05-12T03:15:46.645789Z'
+update=get_updates(time)
 
-print('topo')
-    #* novas mensagens
+#* novas mensagens e salva
 news=get_updates(time)
-update.get_update(news,selfId)
 
-print('updated')
 recs=get_recommendations()
 
 print(me['bio'])
 
 quazmo = '62401030088f0a0100eaf05c'
 guerra = '5b3c66c9226c1e3e29dfa189'
-matchID="5b3c66c9226c1e3e29dfa18962401030088f0a0100eaf05c" #! s2 lindao
+matchID="5b3c66c9226c1e3e29dfa18962401030088f0a0100eaf05c" #! s2 lindão
 
 
 count = "80";
@@ -51,7 +45,7 @@ match_dict = all_matches(count);
 
 matches=match_dict['data']['matches']
 
-#todo: Responde novas mensagems
+#todo: Responde novas mensagens
 for user in matches:
 
     userId = user['_id'];
@@ -63,33 +57,27 @@ for user in matches:
         
             matchID=user['messages'][-1]['match_id']
             personId=user['messages'][0]['from']
-            folder_path = 'conversations' 
-            file_name=f'{matchID}.json'
-            path=f'{folder_path}/{file_name}'
-            try:
-                with open(path) as f:
-                    data = json.load(f)
-                messages_list=data
-            except FileNotFoundError:
-                print('Erro no historico substitua a variavel -- time -- por '+'2020-05-14T23:35:37.375779Z')
 
             person_name=user['person']['name']
             try:
                 bio = user['person']['bio'] #todo: pega bio do match
             except KeyError:
                 bio = None
-
-            response = bot.generate_message(matchID,person_name,bio) 
+            response = bot.generate_message(matchID=matchID,personName=person_name,selfId=selfId,bio=bio,num=10,updates=update)
         else:
             continue
-    else: #? matches sem mensagems
+    else: #? matches sem mensagens
         print(user['person']['name'])
         personId=user['participants'][0]
         matchID=user['_id']
         person_name=user['person']['name']
-        bio = user['person']['bio'] 
-        response = bot.generate_intro(person_name,bio) 
 
+        try:
+            bio = user['person']['bio'] #todo: pega bio do match
+        except KeyError:
+            bio = None
+
+        response = bot.generate_intro(personName=person_name,bio=bio)
 
     response = re.sub(r'\b[Bb][Oo][Tt]\b', 'Gui', response)
     if response.startswith("Gui"):
@@ -99,20 +87,33 @@ for user in matches:
         response = response.split(":")[1:]
         response = "".join(response)
 
-    response=remove_caracteres_especiais_inicio(response)
-    response=remove_caracteres_especiais_final(response)
-    send_msg(matchID,response)
+    response=caracteres.remove_caracteres_especiais_inicio(response)
+    response=caracteres.remove_caracteres_especiais_final(response)
+    
+    response=conversation.human_response(response)
+
+    strings = response[0]#? lista de strings
+    tempos = response[1]#? lista de tempos
     print('-------------------')
-    print(f'Pessoa:{person_name}')
-    print(response)
+    print(f'Resposta final para:{person_name}')
+    for texto, tempo in zip(strings, tempos):
+        #! URGENTE filtrar
+        #! if texto.startswith(person_name):
+        
+        #!     texto=texto.split(":")[1:]
+        #!     texto="".join(texto)
+        print(texto)
+        send_msg(matchID,texto)
+        t.sleep(tempo)
     print('-------------------')
+
 print(me['bio'])
 
 now = datetime.utcnow()  # get current UTC time
 time = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ') 
 print('fundo')
 print(time)
-t.sleep(30)
+
 
 '''except Exception as e:
 
